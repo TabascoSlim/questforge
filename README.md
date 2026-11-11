@@ -13,7 +13,7 @@ A cozy retro RPG that turns small daily tasks into quests. An AI game master pos
 
 ## Try it
 
-**Live demo:** coming soon. Click **Try the demo** on the home page to play without signing up.
+**Live demo: [questforge-nine.vercel.app](https://questforge-nine.vercel.app)**. Click **Try the demo** to play without signing up. The free server naps when idle, so the first visit can take about a minute to wake it.
 
 **Run it locally** (needs Docker):
 
