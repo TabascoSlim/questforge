@@ -1,0 +1,8 @@
+# Keep host-built packages and build output out of the Linux image
+node_modules
+.next
+*.tsbuildinfo
+npm-debug.log*
+.env
+.env.*
+.DS_Store
