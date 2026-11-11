@@ -38,9 +38,9 @@ Then open http://localhost:3000 and click **Try the demo**. An Anthropic or Open
 
 | Status | Quests |
 |---|---|
-| ![Status page with treasure chests](docs/screenshots/status.png) | ![Quest log](docs/screenshots/quests.png) |
+| ![Status page with treasure chests](docs/screenshots/status.jpg) | ![Quest log](docs/screenshots/quests.jpg) |
 | **Ranks** | **Wardrobe** |
-| ![Leaderboard with avatars](docs/screenshots/ranks.png) | ![Avatar wardrobe](docs/screenshots/wardrobe.png) |
+| ![Leaderboard with avatars](docs/screenshots/ranks.jpg) | ![Avatar wardrobe](docs/screenshots/wardrobe.jpg) |
 
 ## How it fits together
 
@@ -63,6 +63,10 @@ flowchart LR
 | **Redis** | XP totals, streaks, ranked leaderboards | Sorted sets make leaderboards instant |
 
 All five run with one `docker compose up`, with health checks so each service waits for the ones it depends on.
+
+### How the free live demo is hosted
+
+The live demo runs entirely on free plans: the website on **Vercel**, and the server on one free **Render** web service. To fit the server into a single free instance, [`deploy/Dockerfile`](deploy/Dockerfile) packs the API, the Rust engine, Redis and Postgres into one container, and the demo world is rebuilt each time it starts. The server naps after 15 minutes without visitors, so the first visit can take about a minute while it wakes up; the site shows a "waking the game server" message while it waits.
 
 ## How I built this with AI
 
@@ -93,6 +97,8 @@ questforge/
 ├── backend/        FastAPI: auth, quests, guilds, AI game master, demo world
 ├── game-engine/    Rust (axum): XP, levels, streaks, leaderboards
 ├── game-wasm/      Optional WebAssembly build of the XP math
+├── deploy/         One-container image for the free live demo
+├── render.yaml     Render setup for the demo server
 └── docker-compose.yml
 ```
 

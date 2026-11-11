@@ -109,7 +109,9 @@ class ApiClient {
       const detail = Array.isArray(error.detail)
         ? error.detail.map((d: { msg?: string }) => (d.msg ?? '').replace(/^Value error, /, '')).join(' ')
         : error.detail;
-      throw new Error(detail || 'Something went wrong. Try again.');
+      const failure = new Error(detail || 'Something went wrong. Try again.') as Error & { status?: number };
+      failure.status = res.status;
+      throw failure;
     }
 
     return res.json();

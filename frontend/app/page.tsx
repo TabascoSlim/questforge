@@ -38,16 +38,31 @@ export default function StatusPage() {
     else setLoading(false);
   }, []);
 
-  async function loadData() {
+  async function loadData(attempt = 0) {
     try {
       const [profile, todays, s] = await Promise.all([api.getMe(), loadTodayQuests(), api.getStats()]);
       setMe(profile);
       setQuests(todays);
       setStats(s);
-    } catch {
-      setMessage({ text: "I couldn't reach the server just now. Check that the server is running, then refresh.", type: 'warning' });
-    } finally {
+      setMessage(null);
       setLoading(false);
+    } catch (err) {
+      const status = (err as { status?: number }).status;
+      if (status === 401) {
+        // The saved login no longer exists (the demo world resets itself), so start over
+        api.clearToken();
+        setToken(null);
+        setLoading(false);
+        return;
+      }
+      setLoading(false);
+      if (attempt < 30) {
+        // A free demo server can take up to a minute to wake from a nap
+        setMessage({ text: 'Waking the game server. Free hosting naps when nobody is around, so this can take up to a minute.', type: 'warning' });
+        setTimeout(() => loadData(attempt + 1), 5000);
+      } else {
+        setMessage({ text: "I couldn't reach the server just now. Check that the server is running, then refresh.", type: 'warning' });
+      }
     }
   }
 
@@ -109,6 +124,14 @@ export default function StatusPage() {
 
   if (loading) {
     return <p className="font-display text-2xl text-center py-20">Loading…</p>;
+  }
+
+  if (!me && message) {
+    return (
+      <section className="window max-w-2xl mx-auto text-center py-8" role="status" aria-live="polite">
+        <p>{message.text}</p>
+      </section>
+    );
   }
 
   const name = me?.display_name || me?.username || 'friend';
